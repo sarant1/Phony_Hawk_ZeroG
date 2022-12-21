@@ -1,13 +1,16 @@
-import pygame
+import pygame, sys
 
 pygame.init()
 clock = pygame.time.Clock()
 FPS = 60
 player_speed = 5
 fireball_speed = 2
+white = (255, 255, 255)
+green = (0, 255, 0)
+blue = (0, 0, 128)
+black = (0, 0, 0)
 
 size = screen_width, screen_height = 1280, 720
-
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Phony Hawk ZeroG")
 
@@ -52,10 +55,52 @@ bg = pygame.image.load("space_bg.png").convert()
 bg = pygame.transform.smoothscale(bg, (1280, 720))
 scroll = 0
 
+# load title image
+
+game_title = pygame.image.load("title-game-menu.png").convert_alpha()
+
+# load text for game menu
+
+font = pygame.font.Font('freesansbold.ttf', 26)
+playgame_text = font.render('Play Game', True, white)
+playgame_text_rect = playgame_text.get_rect()
+playgame_text_rect.center = (screen_width // 2, screen_height // 2 + 13)
+
+
 run = True
 asteroid_start = 0
+
+
+# Adding game state
+class GameState:
+    def __init__(self):
+        self.state = 'menu'
+    def game_state(self):
+        
+        while self.state == 'menu':
+            screen.blit(bg, (0, 0))
+
+            screen.blit(game_title, (((screen_width/2 - game_title.get_width() / 2), 150)))
+            
+            playgame_rect = pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(screen_width/2-125, 350, 250, 45), 2)
+            screen.blit(playgame_text, playgame_text_rect)
+            
+            if playgame_rect.collidepoint(pygame.mouse.get_pos()):
+                playgame_rect = pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(screen_width/2-125, 350, 250, 45))
+                
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.QUIT()
+                    sys.quit()
+
+            pygame.display.flip()
+
+play_game = GameState()
+
 while run:
 
+    play_game.game_state()
     clock.tick(FPS)
 
     # blit 2 images to cover the full size of screen for bg
