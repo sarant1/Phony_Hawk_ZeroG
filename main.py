@@ -1,5 +1,5 @@
 import pygame, sys
-import random
+import game_objects
 
 pygame.init()
 clock = pygame.time.Clock()
@@ -15,33 +15,8 @@ size = screen_width, screen_height = 1280, 720
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Phony Hawk ZeroG")
 
-
-
-
-SPAWNFIREBALL = pygame.USEREVENT+0
-pygame.time.set_timer(SPAWNFIREBALL, 3000)
 meteor_list = []
-class Meteor:
-    def __init__(self):
-        self.size = random.randint(10, 70)
-        self.image = pygame.image.load("fireball.png").convert_alpha()
-        self.image = pygame.transform.smoothscale(self.image, (80, 80))
-        self.image = pygame.transform.rotate(self.image, 310)
-        self.pos = self.image.get_rect()
-        self.pos.right = screen_width
-        self.pos.top = random.randint(0, 1000)
-        self.speed = -random.randint(1, 5)
-    def move(self):
-        self.pos = self.pos.move(self.speed, 0)
-
-class Player:
-    def __init__(self, image, speed):
-        self.speed = speed
-        self.image = image
-        self.pos = image.get_rect()
-        self.pos.width = 150
-        self.pos.height = 150
-    
+ 
 # load bg image
 
 bg = pygame.image.load("space_bg.png").convert()
@@ -58,12 +33,6 @@ font = pygame.font.Font('freesansbold.ttf', 26)
 playgame_text = font.render('Play Game', True, white)
 playgame_text_rect = playgame_text.get_rect()
 playgame_text_rect.center = (screen_width // 2, screen_height // 2 + 13)
-
-# testfireball = pygame.image.load("fireball.png")
-# testfireball_rect = testfireball.get_rect()
-# testfireball = pygame.transform.smoothscale(testfireball, (70, 70))
-run = True
-asteroid_start = 0
 
 class RollingScreen:
     
@@ -83,7 +52,7 @@ class GameState:
         scroll = 0
         FPS = 60
         p_image = pygame.image.load("phony_hawk.png").convert_alpha()
-        p = Player(p_image, player_speed)
+        p = game_objects.Player(p_image, player_speed)
         p.image = pygame.transform.smoothscale(p.image, (150, 150))
         clock = pygame.time.Clock()
 
@@ -118,7 +87,12 @@ class GameState:
             time = 0
             x = 0
             interval = 100
+            SPAWNFIREBALL = 100
             while self.state == 'tutorial':
+
+                # time clock for this level
+                time += 1
+
                 clock.tick(FPS)
                 RollingScreen.rolling_screen(scroll)
                 scroll -= 1
@@ -131,6 +105,9 @@ class GameState:
                 for f in meteor_list:
                     f.move()
                     screen.blit(f.image, f.pos)
+                    if f.pos.right == 0:
+                        meteor_list.remove(f)
+                        del f
                 # User input movement
 
                 keys = pygame.key.get_pressed()
@@ -145,27 +122,43 @@ class GameState:
 
                 # launch the fireballs!
                 
-                print(pygame.time.get_ticks())
+                print(time)
+
+                if time == SPAWNFIREBALL:
+                    x = game_objects.Meteor()
+                    meteor_list.append(x)
+                    SPAWNFIREBALL += 100
+                    print("FIREBALL SPAWNED!")
+                
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         pygame.QUIT()
                         sys.quit()
-                    if event.type == SPAWNFIREBALL:
-                        x = Meteor()
-                        meteor_list.append(x)
+                pygame.display.update()
+                pygame.display.flip()
+        if self.state == 'level1':
+            while self.state == 'level1':
+                screen.blit(bg, (0, 0))
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.QUIT()
+                        sys.quit()
+
                 pygame.display.update()
                 pygame.display.flip()
 
+           
                 
 play_game = GameState()
 
-while run:
+while True:
     clock.tick(FPS)
 
     play_game.game_state()
     
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            run = False
+            pygame.QUIT()
+            sys.quit()
     pygame.display.update()
 pygame.quit()
