@@ -19,3 +19,5 @@ if self.state == 'levelX':
 
         pygame.display.update()
         pygame.display.flip()
+
+        jjjj
