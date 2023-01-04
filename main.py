@@ -17,15 +17,16 @@ pygame.display.set_caption("Phony Hawk ZeroG")
 
 meteor_list = []
 
-# player sprite
-
-p = pygame.sprite.GroupSingle()
-p.add(game_objects.PlayerX())
-
 # add Projectilegroup
 
 projectile_group = pygame.sprite.Group()
 
+def spawnPlayer():
+    p = pygame.sprite.GroupSingle()
+    p.add(game_objects.PlayerX())
+    return p
+p = spawnPlayer()
+isAlive = True
 # load bg image
 
 bg = pygame.image.load("images/space_bg.png").convert()
@@ -64,7 +65,6 @@ class GameState:
         while self.state == 'menu':
             screen.blit(bg, (0, 0))
             
-
             screen.blit(game_title, (((screen_width/2 - game_title.get_width() / 2), 150)))
             
             playgame_rect = pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(screen_width/2-125, 350, 250, 45), 2)
@@ -74,6 +74,8 @@ class GameState:
                 playgame_rect = pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(screen_width/2-125, 350, 250, 45))
                 for event in pygame.event.get():
                     if event.type == pygame.MOUSEBUTTONDOWN:
+                        isAlive = True
+                        p.add(game_objects.PlayerX())
                         self.state = 'playgame'
                         self.game_state()
                         
@@ -107,7 +109,10 @@ class GameState:
                 
 
                 if pygame.sprite.groupcollide(p, projectile_group, True, True):
-                    print("Hola")
+                    projectile_group.empty()
+                    isAlive = False
+                    self.state = 'menu'
+                    self.game_state()
 
                 projectile_group.draw(screen)
                 projectile_group.update(screen)

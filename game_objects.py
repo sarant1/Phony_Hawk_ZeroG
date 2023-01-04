@@ -29,7 +29,7 @@ class PlayerX(pygame.sprite.Sprite):
         self.player_input()
         x = (self.rect[0] + 38, self.rect[1], self.rect[2], self.rect[3])
         # pygame.draw.rect(screen, (255, 255, 255), x, 2)
-        pygame.draw.rect(screen, (255, 255, 255), self.rect, 2)
+        # pygame.draw.rect(screen, (255, 255, 255), self.rect, 2)
 
 class Meteor(pygame.sprite.Sprite):
     def __init__(self):
@@ -52,4 +52,4 @@ class Meteor(pygame.sprite.Sprite):
     def update(self, screen):
         self.move()
         self.die()
-        pygame.draw.rect(screen, (255, 255, 255), self.rect, 2)
+        # pygame.draw.rect(screen, (255, 255, 255), self.rect, 2)
