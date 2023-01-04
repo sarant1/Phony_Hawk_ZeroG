@@ -63,6 +63,7 @@ class GameState:
 
         while self.state == 'menu':
             screen.blit(bg, (0, 0))
+            
 
             screen.blit(game_title, (((screen_width/2 - game_title.get_width() / 2), 150)))
             
@@ -99,13 +100,17 @@ class GameState:
                 scroll -= 1
                 if abs(scroll) > bg.get_width():
                     scroll = 0
-
+                
                 p.draw(screen)
-                p.update()
+                p.update(screen)
+                
+                
 
-                print(projectile_group)
+                if pygame.sprite.groupcollide(p, projectile_group, True, True):
+                    print("Hola")
+
                 projectile_group.draw(screen)
-                projectile_group.update()
+                projectile_group.update(screen)
 
                 if time == SPAWNFIREBALL:
                     x = game_objects.Meteor()
